@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//Hello
 func Hello(c *gin.Context) {
 	name := c.Params.ByName("name")
 	c.JSON(200, gin.H{
@@ -15,10 +16,17 @@ func Hello(c *gin.Context) {
 	})
 }
 
+//Create
 func CreateStudent(c *gin.Context) {
 	var student models.Student
 
 	if err := c.ShouldBindJSON(&student); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error()})
+		return
+	}
+
+	if err := models.StudentValidator(&student); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error()})
 		return
@@ -29,6 +37,7 @@ func CreateStudent(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
+//Getters
 func GetStudents(c *gin.Context) {
 	var students []models.Student
 	database.DB.Find(&students)
@@ -65,6 +74,7 @@ func GetStudentByCPF(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
+//Delete
 func DeleteStudent(c *gin.Context) {
 	var student models.Student
 	id := c.Params.ByName("id")
@@ -74,6 +84,7 @@ func DeleteStudent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": "Student deleted sucessfully"})
 }
 
+//Edit
 func EditStudent(c *gin.Context) {
 	var student models.Student
 	id := c.Params.ByName("id")
@@ -81,6 +92,12 @@ func EditStudent(c *gin.Context) {
 	database.DB.First(&student, id)
 
 	if err := c.ShouldBindJSON(&student); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error()})
+		return
+	}
+
+	if err := models.StudentValidator(&student); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error()})
 		return
