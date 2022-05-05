@@ -12,7 +12,7 @@ import (
 func Hello(c *gin.Context) {
 	name := c.Params.ByName("name")
 	c.JSON(200, gin.H{
-		"API said:": "What's up " + name + ", how u doing?",
+		"API said": "What's up " + name + ", how u doing?",
 	})
 }
 
