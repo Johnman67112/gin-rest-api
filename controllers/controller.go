@@ -106,3 +106,16 @@ func EditStudent(c *gin.Context) {
 	database.DB.Model(&student).UpdateColumns(student)
 	c.JSON(http.StatusOK, student)
 }
+
+func ShowIndex(c *gin.Context) {
+	var students []models.Student
+	database.DB.Find(&students)
+
+	c.HTML(http.StatusOK, "index.html", gin.H{
+		"students": students,
+	})
+}
+
+func RouteNotFound(c *gin.Context) {
+	c.HTML(http.StatusNotFound, "404.html", nil)
+}
