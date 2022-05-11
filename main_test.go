@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/Johnman67112/gin-rest-api/controllers"
@@ -64,6 +67,29 @@ func TestListAllStudents(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.Code)
 }
 
+func TestSearchStudentByID(t *testing.T) {
+	database.DatabaseConnect()
+	CreateStudentMock()
+	defer DeleteStudentMock()
+
+	r := RoutesSetup()
+	r.GET("/students/:id", controllers.GetStudent)
+
+	path := "/students/" + strconv.Itoa(ID)
+	req, _ := http.NewRequest("GET", path, nil)
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+
+	var studentMock models.Student
+	json.Unmarshal(resp.Body.Bytes(), &studentMock)
+
+	assert.Equal(t, "Student's Name Test", studentMock.Name, "Names should be the same")
+	assert.Equal(t, "123456789", studentMock.RG, "RGs should be the same")
+	assert.Equal(t, "12345678901", studentMock.CPF, "CPFs should be the same")
+	assert.Equal(t, http.StatusOK, resp.Code, "Status code should be OK")
+}
+
 func TestSeachStudentByCPF(t *testing.T) {
 	database.DatabaseConnect()
 	CreateStudentMock()
@@ -77,4 +103,45 @@ func TestSeachStudentByCPF(t *testing.T) {
 
 	r.ServeHTTP(resp, req)
 	assert.Equal(t, http.StatusOK, resp.Code)
+}
+
+func TestDeleteStudent(t *testing.T) {
+	database.DatabaseConnect()
+	CreateStudentMock()
+
+	r := RoutesSetup()
+	r.DELETE("/students/:id", controllers.DeleteStudent)
+	path := "/students/" + strconv.Itoa(ID)
+
+	req, _ := http.NewRequest("DELETE", path, nil)
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+	assert.Equal(t, http.StatusOK, resp.Code)
+}
+
+func TestEditStudent(t *testing.T) {
+	database.DatabaseConnect()
+	CreateStudentMock()
+	defer DeleteStudentMock()
+
+	r := RoutesSetup()
+	r.PATCH("/students/:id", controllers.EditStudent)
+
+	student := models.Student{Name: "Student's Name Test", CPF: "47123456789", RG: "123456700"}
+	valueJson, _ := json.Marshal(student)
+	path := "/students/" + strconv.Itoa(ID)
+
+	req, _ := http.NewRequest("PATCH", path, bytes.NewBuffer(valueJson))
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+
+	var studentMock models.Student
+	json.Unmarshal(resp.Body.Bytes(), &studentMock)
+
+	assert.Equal(t, "Student's Name Test", studentMock.Name, "Names should be the same")
+	assert.Equal(t, "123456700", studentMock.RG, "RGs should have been updated")
+	assert.Equal(t, "47123456789", studentMock.CPF, "CPFs should have been updated")
+	assert.Equal(t, http.StatusOK, resp.Code, "Status code should be OK")
 }
