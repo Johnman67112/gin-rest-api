@@ -6,9 +6,20 @@ import (
 	"github.com/Johnman67112/gin-rest-api/database"
 	"github.com/Johnman67112/gin-rest-api/models"
 	"github.com/gin-gonic/gin"
+	_ "github.com/swaggo/swag/example/celler/httputil"
+	_ "github.com/swaggo/swag/example/celler/model"
 )
 
-//Hello
+//Hello godoc
+// @Summary      Says hello
+// @Description  Says hello to user
+// @Tags         hello
+// @Accept       json
+// @Produce      json
+// @Param        name  path  string  true  "Name"
+// @Success      200  {object}  string
+// @Failure      400  {object}  httputil.HTTPError
+// @Router       /{name} [get]
 func Hello(c *gin.Context) {
 	name := c.Params.ByName("name")
 	c.JSON(200, gin.H{
@@ -16,7 +27,16 @@ func Hello(c *gin.Context) {
 	})
 }
 
-//Create
+//CreateStudent godoc
+// @Summary      Creates a new student
+// @Description  With params Name, RG, CPF creates a new student
+// @Tags         students
+// @Accept       json
+// @Produce      json
+// @Param        student  body  models.Student  true  "Student Model"
+// @Success      200  {object}  models.Student
+// @Failure      400  {object}  httputil.HTTPError
+// @Router       /students [post]
 func CreateStudent(c *gin.Context) {
 	var student models.Student
 
@@ -37,7 +57,15 @@ func CreateStudent(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
-//Getters
+//GetStudents godoc
+// @Summary      Show all students
+// @Description  Route to show all students
+// @Tags         students
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  []models.Student
+// @Failure      400  {object}  httputil.HTTPError
+// @Router       /students [get]
 func GetStudents(c *gin.Context) {
 	var students []models.Student
 	database.DB.Find(&students)
