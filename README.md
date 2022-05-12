@@ -20,15 +20,15 @@
 
 ## Project Status
 
-:construction: Under Tests :construction:
+:construction: Documentation Improve :construction:
 
 ## Tecnologies
 
 - ``Golang 1.18``
-- ``Visual Studio Code``
 - ``Gin Framework``
 - ``Docker``
 - ``Postgres``
+- ``Swagger``
 
 ## Running
 
@@ -39,6 +39,9 @@ To run this project just do a:
 
 To run tests just do a:
 `go test`
+
+To see living documentation access:
+`localhost:8080/swagger/index.html`
 
 ## Developers
 
