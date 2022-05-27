@@ -1,4 +1,3 @@
 .env
-go.sum
 postgres-data
 gin-rest-api.exe
