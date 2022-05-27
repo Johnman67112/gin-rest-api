@@ -1,0 +1,1 @@
+web: gin-rest-api
